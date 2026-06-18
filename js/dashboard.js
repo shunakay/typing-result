@@ -121,7 +121,7 @@ const Dashboard = (() => {
     }
 
     const targetHtml = targetLabel
-      ? `<p style="font-size:10px;color:var(--text-sub);margin-top:4px;">${targetLabel}</p>`
+      ? `<p style="font-size:12px;color:var(--text-sub);margin-top:4px;">${targetLabel}</p>`
       : '';
 
     const valueClass = typeof value === 'number' && String(value).length > 4 ? ' card-value--sm' : '';
