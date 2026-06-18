@@ -30,11 +30,10 @@
      記録モード UI
      ===================================================== */
   const _applyRecordModeUI = () => {
-    const badge   = document.getElementById('record-mode-badge');
-    const section = document.getElementById('record-section');
+    const badge = document.getElementById('record-mode-badge');
     if (_isRecordMode) {
       badge?.classList.remove('hidden');
-      section?.classList.remove('hidden');
+      badge?.addEventListener('click', () => Recorder.openRecordModal());
     }
   };
 
