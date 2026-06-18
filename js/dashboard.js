@@ -117,16 +117,16 @@ const Dashboard = (() => {
 
     const valueClass = typeof value === 'number' && String(value).length > 4 ? ' card-value--sm' : '';
     const valueRightHtml = valueRight
-      ? `<span style="font-size:11px;color:var(--text-sub);font-weight:400;margin-left:8px;align-self:flex-end;padding-bottom:6px;">${valueRight}</span>`
+      ? `<span style="font-size:11px;color:var(--text-sub);font-weight:400;">${valueRight}</span>`
       : '';
 
     return `
       <div class="summary-card">
-        <p class="card-label">${label}</p>
-        <div style="display:flex;align-items:baseline;gap:0;">
-          <p class="card-value${valueClass}" style="margin:0;">${value}<span class="card-unit">${unit}</span></p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <p class="card-label" style="margin:0;">${label}</p>
           ${valueRightHtml}
         </div>
+        <p class="card-value${valueClass}">${value}<span class="card-unit">${unit}</span></p>
         <p class="card-sub">${sub}</p>
         ${targetHtml}
         ${progressHtml}
