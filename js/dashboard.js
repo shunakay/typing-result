@@ -235,6 +235,14 @@ const Dashboard = (() => {
           ..._commonOptions.plugins,
           legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
         },
+        scales: {
+          ..._commonOptions.scales,
+          y: {
+            ..._commonOptions.scales.y,
+            // 目標値が必ず表示範囲内に入るよう suggestedMin を設定
+            suggestedMin: CONFIG.TARGETS.score * 0.97,
+          },
+        },
       },
     });
   };
@@ -283,7 +291,11 @@ const Dashboard = (() => {
           ..._commonOptions.scales,
           y: {
             ..._commonOptions.scales.y,
-            min: Math.max(0, Math.min(...data.map(r => r.correctRate || 100)) - 5),
+            // 目標値・データ最小値の両方が収まるよう min を算出
+            min: Math.max(0, Math.min(
+              CONFIG.TARGETS.correctRate,
+              data.length ? Math.min(...data.map(r => r.correctRate || 100)) : 100
+            ) - 3),
             max: 100,
             ticks: {
               ..._commonOptions.scales.y.ticks,
@@ -333,6 +345,14 @@ const Dashboard = (() => {
           ..._commonOptions.plugins,
           legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
         },
+        scales: {
+          ..._commonOptions.scales,
+          y: {
+            ..._commonOptions.scales.y,
+            // 目標値が必ず表示範囲内に入るよう suggestedMin を設定
+            suggestedMin: CONFIG.TARGETS.charCount * 0.97,
+          },
+        },
       },
     });
   };
@@ -379,7 +399,12 @@ const Dashboard = (() => {
         },
         scales: {
           ..._commonOptions.scales,
-          y: { ..._commonOptions.scales.y, min: 0 },
+          y: {
+            ..._commonOptions.scales.y,
+            min: 0,
+            // データが全部目標以下でも目標ラインが見切れないよう suggestedMax を設定
+            suggestedMax: CONFIG.TARGETS.missCount * 1.3,
+          },
         },
       },
     });
