@@ -58,7 +58,8 @@ const Dashboard = (() => {
         label: '過去最高得点',
         value: bestScore !== null ? bestScore.toLocaleString() : '--',
         unit: '点',
-        sub: bestRecord ? `取得日: ${bestRecord.date}` : '',
+        valueRight: bestRecord ? bestRecord.date : '',
+        sub: '',
         targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
         target: CONFIG.TARGETS.score,
         current: bestScore,
@@ -68,6 +69,7 @@ const Dashboard = (() => {
         label: '平均正タイプ率（直近7日）',
         value: avg7dCorrectRate !== null ? avg7dCorrectRate.toFixed(2) : '--',
         unit: '%',
+        valueRight: '',
         sub: '',
         targetLabel: `目標: ${CONFIG.TARGETS.correctRate}%`,
         target: CONFIG.TARGETS.correctRate,
@@ -78,6 +80,7 @@ const Dashboard = (() => {
         label: '平均文字数（直近7日）',
         value: avg7dCharCount !== null ? Math.round(avg7dCharCount).toLocaleString() : '--',
         unit: '字',
+        valueRight: '',
         sub: '',
         targetLabel: `目標: ${CONFIG.TARGETS.charCount.toLocaleString()}字`,
         target: CONFIG.TARGETS.charCount,
@@ -112,12 +115,18 @@ const Dashboard = (() => {
       ? `<p style="font-size:10px;color:var(--text-sub);margin-top:4px;">${targetLabel}</p>`
       : '';
 
+    const valueClass = typeof value === 'number' && String(value).length > 4 ? ' card-value--sm' : '';
+    const valueRightHtml = valueRight
+      ? `<span style="font-size:11px;color:var(--text-sub);font-weight:400;margin-left:8px;align-self:flex-end;padding-bottom:6px;">${valueRight}</span>`
+      : '';
+
     return `
       <div class="summary-card">
         <p class="card-label">${label}</p>
-        <p class="card-value${typeof value === 'number' && String(value).length > 4 ? ' card-value--sm' : ''}">
-          ${value}<span class="card-unit">${unit}</span>
-        </p>
+        <div style="display:flex;align-items:baseline;gap:0;">
+          <p class="card-value${valueClass}" style="margin:0;">${value}<span class="card-unit">${unit}</span></p>
+          ${valueRightHtml}
+        </div>
         <p class="card-sub">${sub}</p>
         ${targetHtml}
         ${progressHtml}
