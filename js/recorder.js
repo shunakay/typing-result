@@ -200,12 +200,13 @@ const Recorder = (() => {
         await GasClient.createRecord(record);
         Toast.show('記録を保存しました！', 'success');
         _clearForm();
+        _closeModal('record-modal');
         _onRefresh?.();
       } catch (err) {
         Toast.show(`保存エラー: ${err.message}`, 'error');
       } finally {
         btn.disabled = false;
-        btn.textContent = '💾 スプレッドシートに保存';
+        btn.textContent = 'スプレッドシートに保存';
       }
     });
   };
@@ -290,7 +291,7 @@ const Recorder = (() => {
         Toast.show(`更新エラー: ${err.message}`, 'error');
       } finally {
         btn.disabled = false;
-        btn.textContent = '💾 更新';
+        btn.textContent = '更新';
       }
     });
   };
@@ -443,11 +444,14 @@ const Recorder = (() => {
     });
   };
 
+  const openRecordModal = () => _openModal('record-modal');
+
   return {
     init,
     renderTable,
     initCsvExport,
     initSelectOptions,
+    openRecordModal,
   };
 })();
 
