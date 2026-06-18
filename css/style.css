@@ -119,7 +119,12 @@ body {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: opacity var(--dur);
 }
+.badge-record:hover { opacity: 0.85; }
 
 /* ===================================================
    メインコンテンツ
@@ -653,6 +658,7 @@ body {
 }
 
 .modal-box--sm { max-width: 420px; }
+.modal-box--lg { max-width: 860px; }
 
 @keyframes slideUp {
   from { transform: translateY(16px); opacity: 0; }
