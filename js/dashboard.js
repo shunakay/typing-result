@@ -37,59 +37,52 @@ const Dashboard = (() => {
 
   /**
    * サマリーカードを描画する
-   * @param {Array} records  全レコード（日付昇順）
+   * @param {Array} records  全レコード
    */
   const renderSummary = (records) => {
     const grid = document.getElementById('summary-grid');
     if (!grid) return;
 
-    const sorted = [...records].sort((a, b) => a.date.localeCompare(b.date));
-    const latest = sorted[sorted.length - 1] || null;
+    // 過去最高得点とその取得日
+    const bestScore = records.length ? Math.max(...records.map(r => r.score)) : null;
+    const bestRecord = bestScore !== null
+      ? records.find(r => r.score === bestScore)
+      : null;
 
-    const latestScore = latest?.score ?? null;
-    const bestScore   = records.length ? Math.max(...records.map(r => r.score)) : null;
-    const avg7d       = _calc7dAvg(records);
-    const streak      = _calcStreak(records);
+    // 直近7日の平均正タイプ率・平均文字数
+    const avg7dCorrectRate = _calc7dAvgField(records, 'correctRate');
+    const avg7dCharCount   = _calc7dAvgField(records, 'charCount');
 
     const cards = [
-      {
-        label: '最新得点',
-        value: latestScore !== null ? latestScore.toLocaleString() : '--',
-        unit: '点',
-        sub: latest ? latest.date : '',
-        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
-        target: CONFIG.TARGETS.score,
-        current: latestScore,
-        higher: true,
-      },
       {
         label: '過去最高得点',
         value: bestScore !== null ? bestScore.toLocaleString() : '--',
         unit: '点',
-        sub: '',
+        sub: bestRecord ? `取得日: ${bestRecord.date}` : '',
         targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
         target: CONFIG.TARGETS.score,
         current: bestScore,
         higher: true,
       },
       {
-        label: '直近7日平均',
-        value: avg7d !== null ? Math.round(avg7d).toLocaleString() : '--',
-        unit: '点',
-        sub: '直近7日の記録から算出',
-        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
-        target: CONFIG.TARGETS.score,
-        current: avg7d,
+        label: '平均正タイプ率（直近7日）',
+        value: avg7dCorrectRate !== null ? avg7dCorrectRate.toFixed(2) : '--',
+        unit: '%',
+        sub: '',
+        targetLabel: `目標: ${CONFIG.TARGETS.correctRate}%`,
+        target: CONFIG.TARGETS.correctRate,
+        current: avg7dCorrectRate,
         higher: true,
       },
       {
-        label: '継続記録',
-        value: streak,
-        unit: '日',
-        sub: '連続で記録した日数',
-        targetLabel: null,
-        target: null,
-        current: null,
+        label: '平均文字数（直近7日）',
+        value: avg7dCharCount !== null ? Math.round(avg7dCharCount).toLocaleString() : '--',
+        unit: '字',
+        sub: '',
+        targetLabel: `目標: ${CONFIG.TARGETS.charCount.toLocaleString()}字`,
+        target: CONFIG.TARGETS.charCount,
+        current: avg7dCharCount,
+        higher: true,
       },
     ];
 
@@ -131,37 +124,14 @@ const Dashboard = (() => {
       </div>`;
   };
 
-  /** 直近 7 日の平均得点 */
-  const _calc7dAvg = (records) => {
+  /** 直近 7 日間の指定フィールドの平均値 */
+  const _calc7dAvgField = (records, field) => {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 7);
-    const recent = records.filter(r => new Date(r.date) >= cutoff);
+    const recent = records.filter(r => new Date(r.date) >= cutoff && r[field] != null);
     if (!recent.length) return null;
-    return recent.reduce((s, r) => s + r.score, 0) / recent.length;
+    return recent.reduce((s, r) => s + r[field], 0) / recent.length;
   };
-
-  /** 連続記録日数（今日から遡って） */
-  const _calcStreak = (records) => {
-    if (!records.length) return 0;
-    const dates = new Set(records.map(r => r.date));
-    let streak = 0;
-    const today = new Date();
-    // 今日または昨日から開始
-    let d = new Date(today);
-    // 今日の記録がない場合は昨日から
-    const todayStr = _dateStr(d);
-    if (!dates.has(todayStr)) d.setDate(d.getDate() - 1);
-
-    while (true) {
-      const str = _dateStr(d);
-      if (!dates.has(str)) break;
-      streak++;
-      d.setDate(d.getDate() - 1);
-    }
-    return streak;
-  };
-
-  const _dateStr = (d) => d.toISOString().slice(0, 10);
 
   /* =====================================================
      グラフ共通ユーティリティ
