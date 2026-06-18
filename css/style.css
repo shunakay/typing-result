@@ -1,18 +1,52 @@
 /* ===================================================
-   カラー変数
+   Design tokens — DESIGN.md より
    =================================================== */
 :root {
-  --primary: #4A90C2;
-  --accent: #FF8C00;
-  --bg: #FFFFFF;
-  --card-bg: #FAFAFA;
-  --border: #E5E5E5;
-  --success: #4CAF50;
-  --danger: #F44336;
-  --text: #333333;
-  --text-sub: #888888;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-  --radius: 8px;
+  /* color */
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #141212;
+  --color-surface-base:   #000000;
+  --color-surface-strong: #e1dbfd;
+  --color-border-strong:  #adadad;
+
+  /* semantic aliases */
+  --primary:   #e1dbfd;
+  --accent:    #e1dbfd;
+  --bg:        #000000;
+  --card-bg:   #0f0f0f;
+  --border:    rgba(173, 173, 173, 0.22);
+  --success:   #4CAF50;
+  --danger:    #F44336;
+  --text:      #ffffff;
+  --text-sub:  #adadad;
+  --shadow:    0 2px 16px rgba(0, 0, 0, 0.7);
+
+  /* radius */
+  --radius-xs: 4px;
+  --radius-sm: 5px;
+  --radius:    10px;   /* md */
+  --radius-lg: 44px;
+  --radius-xl: 45px;
+
+  /* motion */
+  --dur-instant: 300ms;
+  --dur-fast:    400ms;
+  --dur-normal:  500ms;
+
+  /* typography */
+  --font: 'Neue Montreal', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --font-base: 16px;
+  --fw-base:   500;
+
+  /* type scale */
+  --fs-xs:  9px;
+  --fs-sm:  10px;
+  --fs-md:  12px;
+  --fs-lg:  13px;
+  --fs-xl:  16px;
+  --fs-2xl: 20px;
+  --fs-3xl: 24px;
+  --fs-4xl: 26px;
 }
 
 /* ===================================================
@@ -21,24 +55,27 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-weight: 400;
-  background: #F5F7FA;
-  color: var(--text);
-  min-height: 100vh;
+  font-family: var(--font);
+  font-size: var(--font-base);
+  font-weight: var(--fw-base);
   line-height: 1.6;
+  background: var(--color-surface-base);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===================================================
    ヘッダー
    =================================================== */
 .app-header {
-  background: var(--bg);
+  background: rgba(0, 0, 0, 0.85);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .header-inner {
@@ -52,9 +89,9 @@ body {
 }
 
 .app-title {
-  font-size: 18px;
+  font-size: var(--fs-xl);
   font-weight: 700;
-  color: var(--primary);
+  color: var(--color-surface-strong);
   letter-spacing: 0.02em;
 }
 
@@ -67,10 +104,11 @@ body {
 .badge-record {
   background: var(--success);
   color: #fff;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-sm);
   font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 /* ===================================================
@@ -79,10 +117,10 @@ body {
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  padding: 28px 20px 80px;
 }
 
-.section { margin-bottom: 32px; }
+.section { margin-bottom: 36px; }
 
 .section-header {
   display: flex;
@@ -92,9 +130,9 @@ body {
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: var(--fs-2xl);
   font-weight: 700;
-  color: var(--text);
+  color: var(--color-text-primary);
   margin-bottom: 16px;
 }
 
@@ -104,46 +142,55 @@ body {
    ボタン
    =================================================== */
 .btn-primary {
-  background: var(--primary);
-  color: #fff;
+  background: var(--color-surface-strong);
+  color: var(--color-text-secondary);
   border: none;
-  border-radius: var(--radius);
-  padding: 10px 24px;
-  font-size: 14px;
+  border-radius: var(--radius-lg);
+  padding: 10px 28px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-  font-family: inherit;
+  transition: opacity var(--dur-instant), transform var(--dur-instant);
+  font-family: var(--font);
+  letter-spacing: 0.02em;
 }
-.btn-primary:hover { opacity: 0.88; }
+.btn-primary:hover  { opacity: 0.85; }
 .btn-primary:active { transform: scale(0.97); }
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-surface-strong);
+  outline-offset: 3px;
+}
 
 .btn-secondary {
-  background: #fff;
-  color: var(--text);
+  background: transparent;
+  color: var(--color-text-primary);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: var(--fs-lg);
   cursor: pointer;
-  transition: background 0.2s;
-  font-family: inherit;
+  transition: background var(--dur-instant), border-color var(--dur-instant);
+  font-family: var(--font);
 }
-.btn-secondary:hover { background: #f0f0f0; }
+.btn-secondary:hover { background: rgba(255,255,255,0.06); border-color: var(--color-border-strong); }
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-surface-strong);
+  outline-offset: 3px;
+}
 
 .btn-danger {
   background: var(--danger);
   color: #fff;
   border: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   cursor: pointer;
-  font-family: inherit;
-  transition: opacity 0.2s;
+  font-family: var(--font);
+  transition: opacity var(--dur-instant);
 }
-.btn-danger:hover { opacity: 0.88; }
+.btn-danger:hover { opacity: 0.85; }
 
 .btn-icon {
   background: none;
@@ -151,23 +198,28 @@ body {
   font-size: 20px;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: var(--radius);
-  transition: background 0.2s;
+  border-radius: var(--radius-sm);
+  transition: background var(--dur-instant);
   line-height: 1;
+  color: var(--color-text-primary);
 }
-.btn-icon:hover { background: #f0f0f0; }
+.btn-icon:hover { background: rgba(255,255,255,0.08); }
+.btn-icon:focus-visible {
+  outline: 2px solid var(--color-surface-strong);
+  outline-offset: 2px;
+}
 
 .btn-text {
   background: none;
   border: none;
   color: var(--danger);
-  font-size: 13px;
+  font-size: var(--fs-lg);
   cursor: pointer;
   padding: 4px 8px;
-  font-family: inherit;
+  font-family: var(--font);
 }
 
-.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn-sm { padding: 6px 16px; font-size: var(--fs-md); }
 
 /* ===================================================
    ローディング
@@ -175,20 +227,21 @@ body {
 .loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(255,255,255,0.85);
+  background: rgba(0, 0, 0, 0.88);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 16px;
   z-index: 9999;
+  color: var(--color-text-primary);
 }
 
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid var(--border);
-  border-top-color: var(--primary);
+  border: 3px solid rgba(255,255,255,0.12);
+  border-top-color: var(--color-surface-strong);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -205,40 +258,46 @@ body {
 }
 
 .summary-card {
-  background: var(--bg);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 22px 20px;
   box-shadow: var(--shadow);
+  transition: border-color var(--dur-instant);
 }
 
+.summary-card:hover { border-color: rgba(225, 219, 253, 0.35); }
+
 .card-label {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-sub);
-  font-weight: 300;
-  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .card-value {
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--color-surface-strong);
   line-height: 1;
   margin-bottom: 4px;
+  margin-top: 6px;
 }
 
-.card-value--sm { font-size: 32px; }
+.card-value--sm { font-size: 30px; }
 
 .card-unit {
-  font-size: 14px;
+  font-size: var(--fs-xl);
   color: var(--text-sub);
-  margin-left: 4px;
+  margin-left: 3px;
+  font-weight: 500;
 }
 
 .card-sub {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-sub);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* プログレスバー */
@@ -251,26 +310,26 @@ body {
 
 .progress-bar {
   flex: 1;
-  height: 6px;
-  background: var(--border);
-  border-radius: 3px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  border-radius: 3px;
-  background: var(--primary);
+  border-radius: 2px;
+  background: var(--color-surface-strong);
   transition: width 0.6s ease;
 }
 
 .progress-fill.achieved { background: var(--success); }
 
 .progress-label {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 700;
-  color: var(--primary);
-  min-width: 40px;
+  color: var(--color-surface-strong);
+  min-width: 36px;
   text-align: right;
 }
 
@@ -278,7 +337,7 @@ body {
    記録セクション
    =================================================== */
 .record-panel {
-  background: var(--bg);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 24px;
@@ -287,32 +346,26 @@ body {
 
 /* アップロードエリア */
 .upload-area {
-  border: 2px dashed var(--border);
+  border: 1px dashed rgba(173,173,173,0.4);
   border-radius: var(--radius);
   margin-bottom: 20px;
-  transition: border-color 0.2s, background 0.2s;
-  min-height: 150px;
+  transition: border-color var(--dur-instant), background var(--dur-instant);
+  min-height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: relative;
 }
 
 .upload-area.drag-over {
-  border-color: var(--primary);
-  background: rgba(74, 144, 194, 0.05);
+  border-color: var(--color-surface-strong);
+  background: rgba(225, 219, 253, 0.05);
 }
 
-.upload-inner {
-  text-align: center;
-  padding: 24px;
-  width: 100%;
-}
-
-.upload-icon { font-size: 36px; margin-bottom: 8px; }
-.upload-text { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.upload-sub { font-size: 13px; color: var(--text-sub); }
+.upload-inner { text-align: center; padding: 24px; width: 100%; }
+.upload-icon  { font-size: 32px; margin-bottom: 8px; }
+.upload-text  { font-size: var(--fs-xl); font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.upload-sub   { font-size: var(--fs-lg); color: var(--text-sub); }
 
 .upload-preview {
   padding: 16px;
@@ -325,24 +378,25 @@ body {
 .upload-preview img {
   max-height: 200px;
   max-width: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   object-fit: contain;
 }
 
 .ocr-status {
   padding: 10px 16px;
-  background: rgba(74, 144, 194, 0.08);
+  background: rgba(225, 219, 253, 0.08);
   border-radius: var(--radius);
   margin-bottom: 16px;
-  font-size: 14px;
-  color: var(--primary);
+  font-size: var(--fs-lg);
+  color: var(--color-surface-strong);
+  border: 1px solid rgba(225, 219, 253, 0.2);
 }
 
 /* フォーム */
 .record-form .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 20px;
 }
 
@@ -350,24 +404,24 @@ body {
 .form-group--full { grid-column: 1 / -1; }
 
 .form-group label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-sub);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .form-group input,
 .form-group select,
 .input-full {
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: 9px 12px;
-  font-size: 14px;
-  font-family: inherit;
+  font-size: var(--fs-lg);
+  font-family: var(--font);
   color: var(--text);
-  background: var(--bg);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #1a1a1a;
+  transition: border-color var(--dur-instant), box-shadow var(--dur-instant);
   width: 100%;
 }
 
@@ -375,23 +429,33 @@ body {
 .form-group select:focus,
 .input-full:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(74, 144, 194, 0.15);
+  border-color: var(--color-surface-strong);
+  box-shadow: 0 0 0 3px rgba(225, 219, 253, 0.15);
 }
 
 .form-group input[readonly] {
-  background: #F5F7FA;
+  background: #111;
   color: var(--text-sub);
+}
+
+/* select の矢印を白に */
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23adadad' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 10px;
 }
 
 .hint {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--text-sub);
   margin-top: 4px;
 }
@@ -402,29 +466,34 @@ body {
 .period-tabs {
   display: flex;
   gap: 4px;
-  background: var(--card-bg);
+  background: #0f0f0f;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 3px;
 }
 
 .period-tab {
   border: none;
   background: none;
-  padding: 5px 14px;
-  font-size: 13px;
+  padding: 5px 16px;
+  font-size: var(--fs-md);
   font-weight: 700;
-  border-radius: 5px;
+  border-radius: 40px;
   cursor: pointer;
   color: var(--text-sub);
-  transition: all 0.2s;
-  font-family: inherit;
+  transition: all var(--dur-instant);
+  font-family: var(--font);
+  letter-spacing: 0.04em;
 }
 
 .period-tab.active {
-  background: var(--bg);
-  color: var(--primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  background: var(--color-surface-strong);
+  color: var(--color-text-secondary);
+}
+
+.period-tab:focus-visible {
+  outline: 2px solid var(--color-surface-strong);
+  outline-offset: 2px;
 }
 
 .charts-grid {
@@ -434,7 +503,7 @@ body {
 }
 
 .chart-card {
-  background: var(--bg);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
@@ -444,12 +513,12 @@ body {
 .chart-card--wide { grid-column: 1 / -1; }
 
 .chart-title {
-  font-size: 14px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-sub);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
 }
 
 .chart-wrap {
@@ -461,7 +530,7 @@ body {
    履歴テーブル
    =================================================== */
 .table-wrap {
-  background: var(--bg);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -471,18 +540,18 @@ body {
 .history-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: var(--fs-lg);
 }
 
 .history-table th {
   padding: 12px 14px;
   text-align: left;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   color: var(--text-sub);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background: var(--card-bg);
+  letter-spacing: 0.08em;
+  background: #0a0a0a;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
@@ -495,9 +564,9 @@ body {
 }
 
 .history-table tr:last-child td { border-bottom: none; }
-.history-table tr:hover td { background: rgba(74, 144, 194, 0.03); }
+.history-table tr:hover td { background: rgba(225, 219, 253, 0.04); }
 
-.td-score { font-weight: 700; color: var(--accent); }
+.td-score { font-weight: 700; color: var(--color-surface-strong); }
 
 .empty-cell {
   text-align: center;
@@ -506,33 +575,33 @@ body {
 }
 
 .btn-edit {
-  background: rgba(74, 144, 194, 0.12);
-  color: var(--primary);
+  background: rgba(225, 219, 253, 0.12);
+  color: var(--color-surface-strong);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font);
   font-weight: 700;
   margin-right: 4px;
-  transition: background 0.2s;
+  transition: background var(--dur-instant);
 }
-.btn-edit:hover { background: rgba(74, 144, 194, 0.25); }
+.btn-edit:hover { background: rgba(225, 219, 253, 0.25); }
 
 .btn-del {
-  background: rgba(244, 67, 54, 0.1);
+  background: rgba(244, 67, 54, 0.12);
   color: var(--danger);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 4px 10px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font);
   font-weight: 700;
-  transition: background 0.2s;
+  transition: background var(--dur-instant);
 }
-.btn-del:hover { background: rgba(244, 67, 54, 0.22); }
+.btn-del:hover { background: rgba(244, 67, 54, 0.25); }
 
 /* ===================================================
    モーダル
@@ -540,23 +609,25 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.75);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   animation: fadeIn 0.15s ease;
+  backdrop-filter: blur(4px);
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-box {
-  background: var(--bg);
-  border-radius: 12px;
+  background: #0f0f0f;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   width: 100%;
   max-width: 600px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   max-height: 90vh;
@@ -567,7 +638,7 @@ body {
 
 @keyframes slideUp {
   from { transform: translateY(16px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .modal-header {
@@ -578,11 +649,15 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.modal-header h2 { font-size: 17px; }
+.modal-header h2 {
+  font-size: var(--fs-xl);
+  color: var(--text);
+}
 
 .modal-body {
   padding: 24px;
   overflow-y: auto;
+  color: var(--text);
 }
 
 .modal-footer {
@@ -615,21 +690,21 @@ body {
 .toast {
   padding: 12px 20px;
   border-radius: var(--radius);
-  font-size: 14px;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   animation: slideIn 0.25s ease;
   min-width: 240px;
 }
 
 .toast.success { background: var(--success); }
 .toast.error   { background: var(--danger); }
-.toast.info    { background: var(--primary); }
+.toast.info    { background: rgba(225, 219, 253, 0.2); color: var(--color-surface-strong); border: 1px solid rgba(225,219,253,0.3); }
 
 @keyframes slideIn {
   from { transform: translateX(20px); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
 /* ===================================================
@@ -641,20 +716,20 @@ body {
    レスポンシブ
    =================================================== */
 @media (max-width: 768px) {
-  .app-title { font-size: 15px; }
-  .summary-grid { grid-template-columns: repeat(2, 1fr); }
-  .card-value { font-size: 30px; }
-  .charts-grid { grid-template-columns: 1fr; }
-  .chart-card--wide { grid-column: auto; }
+  .app-title         { font-size: var(--fs-lg); }
+  .summary-grid      { grid-template-columns: repeat(2, 1fr); }
+  .card-value        { font-size: 28px; }
+  .charts-grid       { grid-template-columns: 1fr; }
+  .chart-card--wide  { grid-column: auto; }
   .record-form .form-grid { grid-template-columns: 1fr 1fr; }
-  .form-actions { flex-direction: column; }
-  .modal-footer { flex-wrap: wrap; }
+  .form-actions      { flex-direction: column; }
+  .modal-footer      { flex-wrap: wrap; }
 }
 
 @media (max-width: 480px) {
-  .main-content { padding: 16px 12px 60px; }
-  .summary-grid { grid-template-columns: 1fr; }
-  .header-inner { padding: 0 12px; }
-  .period-tabs { display: none; }
+  .main-content      { padding: 16px 12px 60px; }
+  .summary-grid      { grid-template-columns: 1fr; }
+  .header-inner      { padding: 0 12px; }
+  .period-tabs       { display: none; }
   .record-form .form-grid { grid-template-columns: 1fr; }
 }
