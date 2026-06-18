@@ -75,7 +75,7 @@ const Dashboard = (() => {
         higher: true,
       },
       {
-        label: '平均文字数（直近7日）',
+        label: '平均入力文字数（直近7日）',
         value: avg7dCharCount !== null ? Math.round(avg7dCharCount).toLocaleString() : '--',
         unit: '字',
         valueRight: '',
