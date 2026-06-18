@@ -92,7 +92,7 @@ const Dashboard = (() => {
     grid.innerHTML = cards.map(c => _buildCard(c)).join('');
   };
 
-  const _buildCard = ({ label, value, unit, sub, targetLabel, target, current, higher }) => {
+  const _buildCard = ({ label, value, unit, valueRight = '', sub, targetLabel, target, current, higher }) => {
     let progressHtml = '';
     if (target !== null && current !== null) {
       const pct = higher
