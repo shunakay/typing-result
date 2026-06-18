@@ -57,6 +57,7 @@ const Dashboard = (() => {
         value: latestScore !== null ? latestScore.toLocaleString() : '--',
         unit: '点',
         sub: latest ? latest.date : '',
+        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
         target: CONFIG.TARGETS.score,
         current: latestScore,
         higher: true,
@@ -65,7 +66,8 @@ const Dashboard = (() => {
         label: '過去最高得点',
         value: bestScore !== null ? bestScore.toLocaleString() : '--',
         unit: '点',
-        sub: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
+        sub: '',
+        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
         target: CONFIG.TARGETS.score,
         current: bestScore,
         higher: true,
@@ -75,6 +77,7 @@ const Dashboard = (() => {
         value: avg7d !== null ? Math.round(avg7d).toLocaleString() : '--',
         unit: '点',
         sub: '直近7日の記録から算出',
+        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
         target: CONFIG.TARGETS.score,
         current: avg7d,
         higher: true,
@@ -84,7 +87,8 @@ const Dashboard = (() => {
         value: streak,
         unit: '日',
         sub: '連続で記録した日数',
-        target: null,  // 継続日数は達成率なし
+        targetLabel: null,
+        target: null,
         current: null,
       },
     ];
@@ -92,7 +96,7 @@ const Dashboard = (() => {
     grid.innerHTML = cards.map(c => _buildCard(c)).join('');
   };
 
-  const _buildCard = ({ label, value, unit, sub, target, current, higher }) => {
+  const _buildCard = ({ label, value, unit, sub, targetLabel, target, current, higher }) => {
     let progressHtml = '';
     if (target !== null && current !== null) {
       const pct = higher
@@ -111,6 +115,10 @@ const Dashboard = (() => {
         </div>`;
     }
 
+    const targetHtml = targetLabel
+      ? `<p style="font-size:10px;color:var(--text-sub);margin-top:4px;">${targetLabel}</p>`
+      : '';
+
     return `
       <div class="summary-card">
         <p class="card-label">${label}</p>
@@ -118,6 +126,7 @@ const Dashboard = (() => {
           ${value}<span class="card-unit">${unit}</span>
         </p>
         <p class="card-sub">${sub}</p>
+        ${targetHtml}
         ${progressHtml}
       </div>`;
   };
