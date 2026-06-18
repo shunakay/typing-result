@@ -6,6 +6,8 @@ const Dashboard = (() => {
   // Chart インスタンスを保持（期間切替時に破棄して再描画）
   const _charts = {};
 
+  const _font = "'Inter', -apple-system, sans-serif";
+
   // 共通グラフオプション
   const _commonOptions = {
     responsive: true,
@@ -13,20 +15,27 @@ const Dashboard = (() => {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#333',
-        titleFont: { family: "'Noto Sans JP', sans-serif", size: 12 },
-        bodyFont:  { family: "'Noto Sans JP', sans-serif", size: 12 },
-        padding: 10,
+        backgroundColor: '#1c1b1b',
+        borderColor: 'rgba(143,147,123,0.35)',
+        borderWidth: 1,
+        titleColor: '#e5e2e1',
+        bodyColor: '#c5c9af',
+        titleFont: { family: _font, size: 12, weight: '600' },
+        bodyFont:  { family: _font, size: 12 },
+        padding: 12,
+        cornerRadius: 8,
       },
     },
     scales: {
       x: {
-        ticks: { font: { family: "'Noto Sans JP', sans-serif", size: 11 }, color: '#888' },
-        grid: { color: '#f0f0f0' },
+        ticks: { font: { family: _font, size: 11 }, color: '#c5c9af' },
+        grid:  { color: 'rgba(143,147,123,0.12)' },
+        border: { color: 'rgba(143,147,123,0.2)' },
       },
       y: {
-        ticks: { font: { family: "'Noto Sans JP', sans-serif", size: 11 }, color: '#888' },
-        grid: { color: '#f0f0f0' },
+        ticks: { font: { family: _font, size: 11 }, color: '#c5c9af' },
+        grid:  { color: 'rgba(143,147,123,0.12)' },
+        border: { color: 'rgba(143,147,123,0.2)' },
       },
     },
   };
@@ -188,19 +197,18 @@ const Dashboard = (() => {
           {
             label: '得点',
             data: data.map(r => r.score),
-            borderColor: '#4A90C2',
-            backgroundColor: 'rgba(74,144,194,0.08)',
+            borderColor: '#ccf143',
+            backgroundColor: 'rgba(204,241,67,0.07)',
             borderWidth: 2,
-            pointBackgroundColor: '#4A90C2',
+            pointBackgroundColor: '#ccf143',
             pointRadius: 4,
             tension: 0.3,
             fill: true,
           },
-          // 目標値ライン
           {
             label: `目標 ${CONFIG.TARGETS.score.toLocaleString()}点`,
             data: data.map(() => CONFIG.TARGETS.score),
-            borderColor: '#FF8C00',
+            borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
             pointRadius: 0,
@@ -212,13 +220,12 @@ const Dashboard = (() => {
         ..._commonOptions,
         plugins: {
           ..._commonOptions.plugins,
-          legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
+          legend: { display: true, labels: { font: { family: _font, size: 11 }, color: '#c5c9af' } },
         },
         scales: {
           ..._commonOptions.scales,
           y: {
             ..._commonOptions.scales.y,
-            // 目標値が必ず表示範囲内に入るよう suggestedMin を設定
             suggestedMin: CONFIG.TARGETS.score * 0.97,
           },
         },
@@ -241,10 +248,10 @@ const Dashboard = (() => {
           {
             label: '正タイプ率',
             data: data.map(r => r.correctRate),
-            borderColor: '#4CAF50',
-            backgroundColor: 'rgba(76,175,80,0.08)',
+            borderColor: '#7dd3fc',
+            backgroundColor: 'rgba(125,211,252,0.07)',
             borderWidth: 2,
-            pointBackgroundColor: '#4CAF50',
+            pointBackgroundColor: '#7dd3fc',
             pointRadius: 4,
             tension: 0.3,
             fill: true,
@@ -252,7 +259,7 @@ const Dashboard = (() => {
           {
             label: `目標 ${CONFIG.TARGETS.correctRate}%`,
             data: data.map(() => CONFIG.TARGETS.correctRate),
-            borderColor: '#FF8C00',
+            borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
             pointRadius: 0,
@@ -264,13 +271,12 @@ const Dashboard = (() => {
         ..._commonOptions,
         plugins: {
           ..._commonOptions.plugins,
-          legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
+          legend: { display: true, labels: { font: { family: _font, size: 11 }, color: '#c5c9af' } },
         },
         scales: {
           ..._commonOptions.scales,
           y: {
             ..._commonOptions.scales.y,
-            // 目標値・データ最小値の両方が収まるよう min を算出
             min: Math.max(0, Math.min(
               CONFIG.TARGETS.correctRate,
               data.length ? Math.min(...data.map(r => r.correctRate || 100)) : 100
@@ -301,8 +307,8 @@ const Dashboard = (() => {
           {
             label: '入力文字数',
             data: data.map(r => r.charCount),
-            backgroundColor: 'rgba(74,144,194,0.7)',
-            borderColor: '#4A90C2',
+            backgroundColor: 'rgba(167,139,250,0.55)',
+            borderColor: '#a78bfa',
             borderWidth: 1,
             borderRadius: 4,
           },
@@ -310,7 +316,7 @@ const Dashboard = (() => {
             label: `目標 ${CONFIG.TARGETS.charCount}字`,
             data: data.map(() => CONFIG.TARGETS.charCount),
             type: 'line',
-            borderColor: '#FF8C00',
+            borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
             pointRadius: 0,
@@ -322,13 +328,12 @@ const Dashboard = (() => {
         ..._commonOptions,
         plugins: {
           ..._commonOptions.plugins,
-          legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
+          legend: { display: true, labels: { font: { family: _font, size: 11 }, color: '#c5c9af' } },
         },
         scales: {
           ..._commonOptions.scales,
           y: {
             ..._commonOptions.scales.y,
-            // 目標値が必ず表示範囲内に入るよう suggestedMin を設定
             suggestedMin: CONFIG.TARGETS.charCount * 0.97,
           },
         },
@@ -351,10 +356,10 @@ const Dashboard = (() => {
           {
             label: '誤タイプ数',
             data: data.map(r => r.missCount),
-            borderColor: '#F44336',
-            backgroundColor: 'rgba(244,67,54,0.08)',
+            borderColor: '#ffb4ab',
+            backgroundColor: 'rgba(255,180,171,0.07)',
             borderWidth: 2,
-            pointBackgroundColor: '#F44336',
+            pointBackgroundColor: '#ffb4ab',
             pointRadius: 4,
             tension: 0.3,
             fill: true,
@@ -362,7 +367,7 @@ const Dashboard = (() => {
           {
             label: `目標 ${CONFIG.TARGETS.missCount}回以下`,
             data: data.map(() => CONFIG.TARGETS.missCount),
-            borderColor: '#FF8C00',
+            borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
             pointRadius: 0,
@@ -374,14 +379,13 @@ const Dashboard = (() => {
         ..._commonOptions,
         plugins: {
           ..._commonOptions.plugins,
-          legend: { display: true, labels: { font: { family: "'Noto Sans JP', sans-serif", size: 11 } } },
+          legend: { display: true, labels: { font: { family: _font, size: 11 }, color: '#c5c9af' } },
         },
         scales: {
           ..._commonOptions.scales,
           y: {
             ..._commonOptions.scales.y,
             min: 0,
-            // データが全部目標以下でも目標ラインが見切れないよう suggestedMax を設定
             suggestedMax: CONFIG.TARGETS.missCount * 1.3,
           },
         },
