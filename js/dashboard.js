@@ -410,60 +410,6 @@ const Dashboard = (() => {
     });
   };
 
-  /** 曜日別平均得点（レーダーチャート） */
-  const renderWeekdayChart = (records) => {
-    _destroyChart('weekday');
-    const ctx = document.getElementById('chart-weekday');
-    if (!ctx) return;
-
-    const days = ['日', '月', '火', '水', '木', '金', '土'];
-    // 曜日ごとの合計・件数
-    const buckets = Array.from({ length: 7 }, () => ({ sum: 0, count: 0 }));
-    records.forEach(r => {
-      const dow = new Date(r.date).getDay(); // 0=日 〜 6=土
-      buckets[dow].sum += r.score;
-      buckets[dow].count++;
-    });
-    const avgs = buckets.map(b => (b.count ? Math.round(b.sum / b.count) : 0));
-
-    _charts.weekday = new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: days,
-        datasets: [
-          {
-            label: '曜日別平均得点',
-            data: avgs,
-            borderColor: '#4A90C2',
-            backgroundColor: 'rgba(74,144,194,0.15)',
-            pointBackgroundColor: '#4A90C2',
-            pointRadius: 4,
-            borderWidth: 2,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` ${ctx.raw.toLocaleString()}点`,
-            },
-          },
-        },
-        scales: {
-          r: {
-            ticks: { display: false },
-            pointLabels: { font: { family: "'Noto Sans JP', sans-serif", size: 13, weight: 'bold' } },
-            grid: { color: '#e5e5e5' },
-          },
-        },
-      },
-    });
-  };
-
   /**
    * 全グラフを一括描画する
    * @param {Array}  records  全レコード
@@ -475,11 +421,10 @@ const Dashboard = (() => {
     renderCorrectRateChart(records, period);
     renderCharCountChart(records, period);
     renderMissCountChart(records, period);
-    renderWeekdayChart(records);  // レーダーは全期間固定
   };
 
   /**
-   * 期間変更時にグラフのみ再描画（サマリー・レーダーは据え置き）
+   * 期間変更時にグラフのみ再描画
    */
   const reRenderCharts = (records, period) => {
     renderScoreChart(records, period);
