@@ -17,10 +17,10 @@ const CONFIG = {
 
   // 目標値（ダッシュボードの達成率表示に使用）
   TARGETS: {
-    score: 5000,         // 得点
-    correctRate: 99.0,   // 正タイプ率（%）
-    charCount: 500,      // 入力文字数
-    missCount: 5,        // 誤タイプ数（以下が目標）
+    score: 3985,         // 得点
+    correctRate: 97.0,   // 正タイプ率（%）
+    charCount: 404,      // 入力文字数
+    missCount: 11,       // 誤タイプ数（以下が目標）
   },
 
   // 入力方式の選択肢（自由に追加可能）
