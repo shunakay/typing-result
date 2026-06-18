@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>タイピング成績ダッシュボード</title>
+  <title>タイピング成長記録</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -15,7 +15,7 @@
   <!-- ヘッダー -->
   <header class="app-header">
     <div class="header-inner">
-      <h1 class="app-title">⌨️ タイピング成績ダッシュボード</h1>
+      <h1 class="app-title">⌨️ タイピング成長記録</h1>
       <div class="header-right">
         <span id="record-mode-badge" class="badge-record hidden">🔓 記録モード</span>
         <button id="settings-btn" class="btn-icon" title="設定">⚙️</button>
@@ -144,10 +144,6 @@
         <div class="chart-card">
           <h3 class="chart-title">誤タイプ数推移</h3>
           <div class="chart-wrap"><canvas id="chart-miss-count"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <h3 class="chart-title">曜日別平均得点</h3>
-          <div class="chart-wrap"><canvas id="chart-weekday"></canvas></div>
         </div>
       </div>
     </section>
