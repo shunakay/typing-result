@@ -1,0 +1,24 @@
+# APIキーや秘密情報を含む可能性があるファイル
+# config.js には Gemini APIキーが含まれるため除外推奨
+# ただし GitHub Pages で動かすには必要なため、
+# Google AI Studio で HTTPリファラー制限を設定した上で push すること
+config.local.js
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node.js（将来の拡張用）
+node_modules/
+npm-debug.log*
+
+# その他
+*.log
+dist/

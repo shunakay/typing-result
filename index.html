@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイピング成績ダッシュボード</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="app-title">⌨️ タイピング成績ダッシュボード</h1>
+      <div class="header-right">
+        <span id="record-mode-badge" class="badge-record hidden">🔓 記録モード</span>
+        <button id="settings-btn" class="btn-icon" title="設定">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- ローディング表示 -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>データを読み込み中...</p>
+    </div>
+
+    <!-- サマリーカード -->
+    <section class="section">
+      <div class="summary-grid" id="summary-grid">
+        <!-- JS で生成 -->
+      </div>
+    </section>
+
+    <!-- 記録セクション（記録モード時のみ表示） -->
+    <section id="record-section" class="section hidden">
+      <h2 class="section-title">📝 新しい記録を追加</h2>
+      <div class="record-panel">
+
+        <!-- 画像アップロード -->
+        <div class="upload-area" id="upload-area">
+          <div class="upload-inner" id="upload-inner">
+            <p class="upload-icon">📸</p>
+            <p class="upload-text">スクリーンショットをドロップ<br>またはクリックして選択</p>
+            <p class="upload-sub">AI が自動で成績を読み取ります</p>
+            <input type="file" id="file-input" accept="image/*" class="hidden" />
+          </div>
+          <div id="upload-preview" class="upload-preview hidden">
+            <img id="preview-img" src="" alt="プレビュー" />
+            <button class="btn-text" id="clear-image-btn">✕ 画像をクリア</button>
+          </div>
+        </div>
+
+        <!-- OCR状態表示 -->
+        <div id="ocr-status" class="ocr-status hidden">
+          <span id="ocr-status-text">🤖 AI が解析中...</span>
+        </div>
+
+        <!-- 入力フォーム -->
+        <form id="record-form" class="record-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-date">日付</label>
+              <input type="date" id="f-date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="f-input-type">入力方式</label>
+              <select id="f-input-type" name="inputType">
+                <!-- config.js の INPUT_TYPES から生成 -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-time">制限時間（分）</label>
+              <input type="number" id="f-time" name="timeMinutes" min="1" max="60" step="0.5" />
+            </div>
+            <div class="form-group">
+              <label for="f-score">得点</label>
+              <input type="number" id="f-score" name="score" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-char-count">入力文字数</label>
+              <input type="number" id="f-char-count" name="charCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-correct-count">正タイプ数</label>
+              <input type="number" id="f-correct-count" name="correctCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-miss-count">誤タイプ数</label>
+              <input type="number" id="f-miss-count" name="missCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-correct-rate">正タイプ率（%）</label>
+              <input type="number" id="f-correct-rate" name="correctRate" step="0.001" readonly />
+            </div>
+            <div class="form-group">
+              <label for="f-miss-rate">誤タイプ率（%）</label>
+              <input type="number" id="f-miss-rate" name="missRate" step="0.001" readonly />
+            </div>
+            <div class="form-group form-group--full">
+              <label for="f-memo">メモ</label>
+              <input type="text" id="f-memo" name="memo" placeholder="任意のメモ" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="form-clear-btn">クリア</button>
+            <button type="submit" class="btn-primary" id="form-submit-btn">
+              💾 スプレッドシートに保存
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- グラフセクション -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">📊 グラフ</h2>
+        <div class="period-tabs" id="period-tabs">
+          <button class="period-tab active" data-period="all">全期間</button>
+          <button class="period-tab" data-period="30d">30日</button>
+          <button class="period-tab" data-period="7d">7日</button>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card chart-card--wide">
+          <h3 class="chart-title">得点推移</h3>
+          <div class="chart-wrap"><canvas id="chart-score"></canvas></div>
+        </div>
+        <div class="chart-card chart-card--wide">
+          <h3 class="chart-title">正タイプ率推移</h3>
+          <div class="chart-wrap"><canvas id="chart-correct-rate"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-title">入力文字数推移</h3>
+          <div class="chart-wrap"><canvas id="chart-char-count"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-title">誤タイプ数推移</h3>
+          <div class="chart-wrap"><canvas id="chart-miss-count"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-title">曜日別平均得点</h3>
+          <div class="chart-wrap"><canvas id="chart-weekday"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 履歴テーブル -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">📋 履歴</h2>
+        <button class="btn-secondary btn-sm" id="csv-export-btn">⬇ CSV 出力</button>
+      </div>
+      <div class="table-wrap">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>入力方式</th>
+              <th>時間</th>
+              <th>得点</th>
+              <th>文字数</th>
+              <th>正タイプ</th>
+              <th>誤タイプ</th>
+              <th>正タイプ率</th>
+              <th>誤タイプ率</th>
+              <th>メモ</th>
+              <th id="table-action-header" class="hidden">操作</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="11" class="empty-cell">データがありません</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 設定モーダル -->
+  <div id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>⚙️ 設定</h2>
+        <button class="btn-icon modal-close" data-modal="settings-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="gas-url-input">GAS Web App URL（記録モード用）</label>
+          <input type="url" id="gas-url-input" class="input-full"
+                 placeholder="https://script.google.com/macros/s/..." />
+          <p class="hint">入力すると記録モードが有効になります。URLが秘密鍵の役割を果たします。</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-danger" id="disable-record-mode-btn">🔒 記録モードを解除</button>
+        <button class="btn-primary" id="save-settings-btn">保存してリロード</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 編集モーダル -->
+  <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>✏️ 記録を編集</h2>
+        <button class="btn-icon modal-close" data-modal="edit-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-form" class="record-form">
+          <input type="hidden" id="e-row-index" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="e-date">日付</label>
+              <input type="date" id="e-date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="e-input-type">入力方式</label>
+              <select id="e-input-type" name="inputType"></select>
+            </div>
+            <div class="form-group">
+              <label for="e-time">制限時間（分）</label>
+              <input type="number" id="e-time" name="timeMinutes" min="1" max="60" step="0.5" />
+            </div>
+            <div class="form-group">
+              <label for="e-score">得点</label>
+              <input type="number" id="e-score" name="score" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="e-char-count">入力文字数</label>
+              <input type="number" id="e-char-count" name="charCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="e-correct-count">正タイプ数</label>
+              <input type="number" id="e-correct-count" name="correctCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="e-miss-count">誤タイプ数</label>
+              <input type="number" id="e-miss-count" name="missCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="e-correct-rate">正タイプ率（%）</label>
+              <input type="number" id="e-correct-rate" name="correctRate" step="0.001" readonly />
+            </div>
+            <div class="form-group">
+              <label for="e-miss-rate">誤タイプ率（%）</label>
+              <input type="number" id="e-miss-rate" name="missRate" step="0.001" readonly />
+            </div>
+            <div class="form-group form-group--full">
+              <label for="e-memo">メモ</label>
+              <input type="text" id="e-memo" name="memo" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-modal="edit-modal" class="modal-close">キャンセル</button>
+        <button class="btn-primary" id="edit-save-btn">💾 更新</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 削除確認モーダル -->
+  <div id="delete-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box modal-box--sm">
+      <div class="modal-header">
+        <h2>🗑 削除の確認</h2>
+        <button class="btn-icon modal-close" data-modal="delete-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>この記録を削除してもよいですか？この操作は元に戻せません。</p>
+        <p id="delete-record-info" class="delete-info"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary modal-close" data-modal="delete-modal">キャンセル</button>
+        <button class="btn-danger" id="delete-confirm-btn">削除する</button>
+      </div>
+      <input type="hidden" id="delete-row-index" />
+    </div>
+  </div>
+
+  <!-- Toast 通知 -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/gas-client.js"></script>
+  <script src="js/ocr.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/recorder.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
