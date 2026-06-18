@@ -17,7 +17,7 @@
     <div class="header-inner">
       <h1 class="app-title">タイピング成長記録</h1>
       <div class="header-right">
-        <span id="record-mode-badge" class="badge-record hidden">🔓 記録モード</span>
+        <button id="record-mode-badge" class="badge-record hidden">記録モード</button>
         <button id="settings-btn" class="btn-icon" title="設定">設定</button>
       </div>
     </div>
@@ -38,85 +38,6 @@
       </div>
     </section>
 
-    <!-- 記録セクション（記録モード時のみ表示） -->
-    <section id="record-section" class="section hidden">
-      <h2 class="section-title">新しい記録を追加</h2>
-      <div class="record-panel">
-
-        <!-- 画像アップロード -->
-        <div class="upload-area" id="upload-area">
-          <div class="upload-inner" id="upload-inner">
-            <p class="upload-icon">📸</p>
-            <p class="upload-text">スクリーンショットをドロップ<br>またはクリックして選択</p>
-            <p class="upload-sub">AI が自動で成績を読み取ります</p>
-            <input type="file" id="file-input" accept="image/*" class="hidden" />
-          </div>
-          <div id="upload-preview" class="upload-preview hidden">
-            <img id="preview-img" src="" alt="プレビュー" />
-            <button class="btn-text" id="clear-image-btn">✕ 画像をクリア</button>
-          </div>
-        </div>
-
-        <!-- OCR状態表示 -->
-        <div id="ocr-status" class="ocr-status hidden">
-          <span id="ocr-status-text">🤖 AI が解析中...</span>
-        </div>
-
-        <!-- 入力フォーム -->
-        <form id="record-form" class="record-form">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="f-date">日付</label>
-              <input type="date" id="f-date" name="date" required />
-            </div>
-            <div class="form-group">
-              <label for="f-input-type">入力方式</label>
-              <select id="f-input-type" name="inputType">
-                <!-- config.js の INPUT_TYPES から生成 -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="f-time">制限時間（分）</label>
-              <input type="number" id="f-time" name="timeMinutes" min="1" max="60" step="0.5" />
-            </div>
-            <div class="form-group">
-              <label for="f-score">得点</label>
-              <input type="number" id="f-score" name="score" min="0" />
-            </div>
-            <div class="form-group">
-              <label for="f-char-count">入力文字数</label>
-              <input type="number" id="f-char-count" name="charCount" min="0" />
-            </div>
-            <div class="form-group">
-              <label for="f-correct-count">正タイプ数</label>
-              <input type="number" id="f-correct-count" name="correctCount" min="0" />
-            </div>
-            <div class="form-group">
-              <label for="f-miss-count">誤タイプ数</label>
-              <input type="number" id="f-miss-count" name="missCount" min="0" />
-            </div>
-            <div class="form-group">
-              <label for="f-correct-rate">正タイプ率（%）</label>
-              <input type="number" id="f-correct-rate" name="correctRate" step="0.001" readonly />
-            </div>
-            <div class="form-group">
-              <label for="f-miss-rate">誤タイプ率（%）</label>
-              <input type="number" id="f-miss-rate" name="missRate" step="0.001" readonly />
-            </div>
-            <div class="form-group form-group--full">
-              <label for="f-memo">メモ</label>
-              <input type="text" id="f-memo" name="memo" placeholder="任意のメモ" />
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" id="form-clear-btn">クリア</button>
-            <button type="submit" class="btn-primary" id="form-submit-btn">
-              スプレッドシートに保存
-            </button>
-          </div>
-        </form>
-      </div>
-    </section>
 
     <!-- グラフセクション -->
     <section class="section">
@@ -179,6 +100,90 @@
     </section>
 
   </main>
+
+  <!-- 記録モーダル -->
+  <div id="record-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-box modal-box--lg">
+      <div class="modal-header">
+        <h2>新しい記録を追加</h2>
+        <button class="btn-icon modal-close" data-modal="record-modal">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 画像アップロード -->
+        <div class="upload-area" id="upload-area">
+          <div class="upload-inner" id="upload-inner">
+            <p class="upload-icon">📸</p>
+            <p class="upload-text">スクリーンショットをドロップ<br>またはクリックして選択</p>
+            <p class="upload-sub">AI が自動で成績を読み取ります</p>
+            <input type="file" id="file-input" accept="image/*" class="hidden" />
+          </div>
+          <div id="upload-preview" class="upload-preview hidden">
+            <img id="preview-img" src="" alt="プレビュー" />
+            <button class="btn-text" id="clear-image-btn">✕ 画像をクリア</button>
+          </div>
+        </div>
+
+        <!-- OCR状態表示 -->
+        <div id="ocr-status" class="ocr-status hidden">
+          <span id="ocr-status-text">AI が解析中...</span>
+        </div>
+
+        <!-- 入力フォーム -->
+        <form id="record-form" class="record-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-date">日付</label>
+              <input type="date" id="f-date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="f-input-type">入力方式</label>
+              <select id="f-input-type" name="inputType">
+                <!-- config.js の INPUT_TYPES から生成 -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-time">制限時間（分）</label>
+              <input type="number" id="f-time" name="timeMinutes" min="1" max="60" step="0.5" />
+            </div>
+            <div class="form-group">
+              <label for="f-score">得点</label>
+              <input type="number" id="f-score" name="score" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-char-count">入力文字数</label>
+              <input type="number" id="f-char-count" name="charCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-correct-count">正タイプ数</label>
+              <input type="number" id="f-correct-count" name="correctCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-miss-count">誤タイプ数</label>
+              <input type="number" id="f-miss-count" name="missCount" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="f-correct-rate">正タイプ率（%）</label>
+              <input type="number" id="f-correct-rate" name="correctRate" step="0.001" readonly />
+            </div>
+            <div class="form-group">
+              <label for="f-miss-rate">誤タイプ率（%）</label>
+              <input type="number" id="f-miss-rate" name="missRate" step="0.001" readonly />
+            </div>
+            <div class="form-group form-group--full">
+              <label for="f-memo">メモ</label>
+              <input type="text" id="f-memo" name="memo" placeholder="任意のメモ" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="form-clear-btn">クリア</button>
+            <button type="submit" class="btn-primary" id="form-submit-btn">スプレッドシートに保存</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
 
   <!-- 設定モーダル -->
   <div id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
