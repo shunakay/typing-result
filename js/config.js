@@ -24,7 +24,7 @@ const CONFIG = {
   },
 
   // 入力方式の選択肢（自由に追加可能）
-  INPUT_TYPES: ['英字', '日本語', 'かな', 'その他'],
+  INPUT_TYPES: ['英字', 'ローマ字'],
 
   // サンプルデータ（GAS_READ_URL 未設定時に表示）
   SAMPLE_DATA: [
