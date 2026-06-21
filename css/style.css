@@ -127,12 +127,60 @@ body {
 .badge-record:hover { opacity: 0.85; }
 
 /* ===================================================
+   レイアウト（サイドバー + メイン）
+   =================================================== */
+.app-layout {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - 56px);
+}
+
+.sidebar {
+  width: 152px;
+  flex-shrink: 0;
+  background: var(--surface-low);
+  border-right: 1px solid var(--border);
+  padding: var(--space-lg) var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.nav-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  padding: 9px var(--space-sm);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--dur), color var(--dur);
+  white-space: nowrap;
+}
+
+.nav-item:hover { background: var(--surface-high); color: var(--text); }
+
+.nav-item.active {
+  background: rgba(204, 241, 67, 0.12);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ===================================================
    メインコンテンツ
    =================================================== */
 .main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg) var(--space-md) 80px;
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-lg) var(--space-lg) 80px;
 }
 
 .section { margin-bottom: var(--space-xl); }
@@ -760,6 +808,21 @@ body {
   .record-form .form-grid { grid-template-columns: 1fr 1fr; }
   .form-actions     { flex-direction: column; }
   .modal-footer     { flex-wrap: wrap; }
+
+  /* サイドバー → 上部横タブ */
+  .app-layout  { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    padding: var(--space-sm) var(--space-md);
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    gap: var(--space-sm);
+  }
+  .nav-item { white-space: nowrap; flex-shrink: 0; width: auto; }
 }
 
 @media (max-width: 480px) {
