@@ -6,9 +6,10 @@
   /* =====================================================
      状態
      ===================================================== */
-  let _records    = [];    // 全レコード
-  let _period     = 'all'; // グラフ期間
+  let _records      = [];      // 全レコード
+  let _period       = 'all';  // グラフ期間
   let _isRecordMode = false;
+  let _inputType    = CONFIG.INPUT_TYPES[0]; // 選択中の入力方式
 
   /* =====================================================
      起動
@@ -17,14 +18,39 @@
     _isRecordMode = !!localStorage.getItem('gasWriteUrl');
     _applyRecordModeUI();
 
+    _initSidebar();
     Recorder.initSelectOptions();
     Recorder.init(_isRecordMode, _refresh);
-    Recorder.initCsvExport(() => _records);
+    Recorder.initCsvExport(() => _filteredRecords());
 
     _initPeriodTabs();
 
     await _loadData();
   });
+
+  /* =====================================================
+     サイドバー（入力方式フィルター）
+     ===================================================== */
+  const _initSidebar = () => {
+    const nav = document.getElementById('sidebar');
+    if (!nav) return;
+
+    nav.innerHTML = CONFIG.INPUT_TYPES.map(type => `
+      <button class="nav-item${type === _inputType ? ' active' : ''}" data-type="${type}">
+        ${type}
+      </button>
+    `).join('');
+
+    nav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.nav-item');
+      if (!btn) return;
+      _inputType = btn.dataset.type;
+      nav.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b === btn));
+      _renderAll();
+    });
+  };
+
+  const _filteredRecords = () => _records.filter(r => r.inputType === _inputType);
 
   /* =====================================================
      記録モード UI
@@ -79,8 +105,9 @@
      描画
      ===================================================== */
   const _renderAll = () => {
-    Dashboard.renderAll(_records, _period);
-    Recorder.renderTable(_records, _isRecordMode);
+    const filtered = _filteredRecords();
+    Dashboard.renderAll(filtered, _period);
+    Recorder.renderTable(filtered, _isRecordMode);
   };
 
   /* =====================================================
