@@ -177,10 +177,13 @@ const Dashboard = (() => {
     const ctx = document.getElementById('chart-score');
     if (!ctx) return;
 
+    const labels = data.length > 0 ? data.map(r => _toLabel(r.date)) : ['', ''];
+    const mkTarget = (val) => labels.map(() => val);
+
     _charts.score = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.map(r => _toLabel(r.date)),
+        labels,
         datasets: [
           {
             label: '得点',
@@ -195,7 +198,7 @@ const Dashboard = (() => {
           },
           {
             label: `目標 ${T.score.toLocaleString()}点`,
-            data: data.map(() => T.score),
+            data: mkTarget(T.score),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
@@ -224,10 +227,13 @@ const Dashboard = (() => {
     const ctx = document.getElementById('chart-correct-rate');
     if (!ctx) return;
 
+    const labels = data.length > 0 ? data.map(r => _toLabel(r.date)) : ['', ''];
+    const mkTarget = (val) => labels.map(() => val);
+
     _charts.correctRate = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.map(r => _toLabel(r.date)),
+        labels,
         datasets: [
           {
             label: '正タイプ率',
@@ -242,7 +248,7 @@ const Dashboard = (() => {
           },
           {
             label: `目標 ${T.correctRate}%`,
-            data: data.map(() => T.correctRate),
+            data: mkTarget(T.correctRate),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
@@ -279,10 +285,13 @@ const Dashboard = (() => {
     const ctx = document.getElementById('chart-char-count');
     if (!ctx) return;
 
+    const labels = data.length > 0 ? data.map(r => _toLabel(r.date)) : ['', ''];
+    const mkTarget = (val) => labels.map(() => val);
+
     _charts.charCount = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: data.map(r => _toLabel(r.date)),
+        labels,
         datasets: [
           {
             label: '入力文字数',
@@ -294,7 +303,7 @@ const Dashboard = (() => {
           },
           {
             label: `目標 ${T.charCount}字`,
-            data: data.map(() => T.charCount),
+            data: mkTarget(T.charCount),
             type: 'line',
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
@@ -324,10 +333,13 @@ const Dashboard = (() => {
     const ctx = document.getElementById('chart-miss-count');
     if (!ctx) return;
 
+    const labels = data.length > 0 ? data.map(r => _toLabel(r.date)) : ['', ''];
+    const mkTarget = (val) => labels.map(() => val);
+
     _charts.missCount = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: data.map(r => _toLabel(r.date)),
+        labels,
         datasets: [
           {
             label: '誤タイプ数',
@@ -342,7 +354,7 @@ const Dashboard = (() => {
           },
           {
             label: `目標 ${T.missCount}回以下`,
-            data: data.map(() => T.missCount),
+            data: mkTarget(T.missCount),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
