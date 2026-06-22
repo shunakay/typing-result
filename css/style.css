@@ -89,9 +89,7 @@ body {
 }
 
 .header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 24px;
   height: 56px;
   display: flex;
   align-items: center;
