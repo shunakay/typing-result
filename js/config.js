@@ -15,12 +15,10 @@ const CONFIG = {
   // 未設定の場合はサンプルデータで表示します
   GAS_READ_URL: 'https://script.google.com/macros/s/AKfycbwx6krcYi17-c9bmStgHcj2lLJVwf7sJH61IiieM1I1P9AS4FFbkcvDdMrVKwoGoFV7/exec',
 
-  // 目標値（ダッシュボードの達成率表示に使用）
+  // 目標値（入力方式別）
   TARGETS: {
-    score: 3985,         // 得点
-    correctRate: 97.0,   // 正タイプ率（%）
-    charCount: 404,      // 入力文字数
-    missCount: 11,       // 誤タイプ数（以下が目標）
+    '英字':   { score: 3985, correctRate: 97.0, charCount: 404, missCount: 11 },
+    'ローマ字': { score: 83,   correctRate: 97.0, charCount: 404, missCount: 11 },
   },
 
   // 入力方式の選択肢（自由に追加可能）
