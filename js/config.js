@@ -18,7 +18,7 @@ const CONFIG = {
   // 目標値（入力方式別）
   TARGETS: {
     '英字':   { score: 3985, correctRate: 97.0, charCount: 404, missCount: 11 },
-    'ローマ字': { score: 83,   correctRate: 98.7, charCount: 628, missCount: 11 },
+    'ローマ字': { score: 83,   correctRate: 98.7, charCount: 628, missCount: 15 },
   },
 
   // 入力方式の選択肢（自由に追加可能）
