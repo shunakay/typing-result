@@ -3,9 +3,7 @@
  * サマリーカード・Chart.js グラフを管理する
  */
 const Dashboard = (() => {
-  // Chart インスタンスを保持（期間切替時に破棄して再描画）
   const _charts = {};
-
   const _font = "'Inter', -apple-system, sans-serif";
 
   // 共通グラフオプション
@@ -40,25 +38,23 @@ const Dashboard = (() => {
     },
   };
 
+  /** 入力方式に対応する目標値オブジェクトを返す */
+  const _getTargets = (inputType) =>
+    CONFIG.TARGETS[inputType] || Object.values(CONFIG.TARGETS)[0];
+
   /* =====================================================
      サマリーカード
      ===================================================== */
 
-  /**
-   * サマリーカードを描画する
-   * @param {Array} records  全レコード
-   */
-  const renderSummary = (records) => {
+  const renderSummary = (records, inputType) => {
     const grid = document.getElementById('summary-grid');
     if (!grid) return;
 
-    // 過去最高得点とその取得日
-    const bestScore = records.length ? Math.max(...records.map(r => r.score)) : null;
-    const bestRecord = bestScore !== null
-      ? records.find(r => r.score === bestScore)
-      : null;
+    const T = _getTargets(inputType);
 
-    // 直近7日の平均正タイプ率・平均文字数
+    const bestScore = records.length ? Math.max(...records.map(r => r.score)) : null;
+    const bestRecord = bestScore !== null ? records.find(r => r.score === bestScore) : null;
+
     const avg7dCorrectRate = _calc7dAvgField(records, 'correctRate');
     const avg7dCharCount   = _calc7dAvgField(records, 'charCount');
 
@@ -69,8 +65,8 @@ const Dashboard = (() => {
         unit: '点',
         valueRight: bestRecord ? bestRecord.date : '',
         sub: '',
-        targetLabel: `目標: ${CONFIG.TARGETS.score.toLocaleString()}点`,
-        target: CONFIG.TARGETS.score,
+        targetLabel: `目標: ${T.score.toLocaleString()}点`,
+        target: T.score,
         current: bestScore,
         higher: true,
       },
@@ -80,8 +76,8 @@ const Dashboard = (() => {
         unit: '字',
         valueRight: '',
         sub: '',
-        targetLabel: `目標: ${CONFIG.TARGETS.charCount.toLocaleString()}字`,
-        target: CONFIG.TARGETS.charCount,
+        targetLabel: `目標: ${T.charCount.toLocaleString()}字`,
+        target: T.charCount,
         current: avg7dCharCount,
         higher: true,
       },
@@ -91,8 +87,8 @@ const Dashboard = (() => {
         unit: '%',
         valueRight: '',
         sub: '',
-        targetLabel: `目標: ${CONFIG.TARGETS.correctRate}%`,
-        target: CONFIG.TARGETS.correctRate,
+        targetLabel: `目標: ${T.correctRate}%`,
+        target: T.correctRate,
         current: avg7dCorrectRate,
         higher: true,
       },
@@ -142,7 +138,6 @@ const Dashboard = (() => {
       </div>`;
   };
 
-  /** 直近 7 日間の指定フィールドの平均値 */
   const _calc7dAvgField = (records, field) => {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 7);
@@ -155,7 +150,6 @@ const Dashboard = (() => {
      グラフ共通ユーティリティ
      ===================================================== */
 
-  /** 期間でレコードを絞り込む */
   const filterByPeriod = (records, period) => {
     if (period === 'all') return records;
     const days = period === '30d' ? 30 : 7;
@@ -164,15 +158,10 @@ const Dashboard = (() => {
     return records.filter(r => new Date(r.date) >= cutoff);
   };
 
-  /** Chart インスタンスを安全に破棄して再生成 */
   const _destroyChart = (key) => {
-    if (_charts[key]) {
-      _charts[key].destroy();
-      delete _charts[key];
-    }
+    if (_charts[key]) { _charts[key].destroy(); delete _charts[key]; }
   };
 
-  /** 横軸ラベル（日付文字列 → MM/DD） */
   const _toLabel = (dateStr) => {
     const [, m, d] = dateStr.split('-');
     return `${m}/${d}`;
@@ -182,8 +171,7 @@ const Dashboard = (() => {
      各グラフ
      ===================================================== */
 
-  /** 得点推移（折れ線） */
-  const renderScoreChart = (records, period) => {
+  const renderScoreChart = (records, period, T) => {
     _destroyChart('score');
     const data = filterByPeriod(records, period).sort((a, b) => a.date.localeCompare(b.date));
     const ctx = document.getElementById('chart-score');
@@ -206,8 +194,8 @@ const Dashboard = (() => {
             fill: true,
           },
           {
-            label: `目標 ${CONFIG.TARGETS.score.toLocaleString()}点`,
-            data: data.map(() => CONFIG.TARGETS.score),
+            label: `目標 ${T.score.toLocaleString()}点`,
+            data: data.map(() => T.score),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
@@ -224,17 +212,13 @@ const Dashboard = (() => {
         },
         scales: {
           ..._commonOptions.scales,
-          y: {
-            ..._commonOptions.scales.y,
-            suggestedMin: CONFIG.TARGETS.score * 0.97,
-          },
+          y: { ..._commonOptions.scales.y, suggestedMin: T.score * 0.97 },
         },
       },
     });
   };
 
-  /** 正タイプ率推移（折れ線・目標 99% 点線） */
-  const renderCorrectRateChart = (records, period) => {
+  const renderCorrectRateChart = (records, period, T) => {
     _destroyChart('correctRate');
     const data = filterByPeriod(records, period).sort((a, b) => a.date.localeCompare(b.date));
     const ctx = document.getElementById('chart-correct-rate');
@@ -257,8 +241,8 @@ const Dashboard = (() => {
             fill: true,
           },
           {
-            label: `目標 ${CONFIG.TARGETS.correctRate}%`,
-            data: data.map(() => CONFIG.TARGETS.correctRate),
+            label: `目標 ${T.correctRate}%`,
+            data: data.map(() => T.correctRate),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
@@ -278,22 +262,18 @@ const Dashboard = (() => {
           y: {
             ..._commonOptions.scales.y,
             min: Math.max(0, Math.min(
-              CONFIG.TARGETS.correctRate,
+              T.correctRate,
               data.length ? Math.min(...data.map(r => r.correctRate || 100)) : 100
             ) - 3),
             max: 100,
-            ticks: {
-              ..._commonOptions.scales.y.ticks,
-              callback: v => `${v}%`,
-            },
+            ticks: { ..._commonOptions.scales.y.ticks, callback: v => `${v}%` },
           },
         },
       },
     });
   };
 
-  /** 入力文字数推移（棒グラフ・目標 500 点線） */
-  const renderCharCountChart = (records, period) => {
+  const renderCharCountChart = (records, period, T) => {
     _destroyChart('charCount');
     const data = filterByPeriod(records, period).sort((a, b) => a.date.localeCompare(b.date));
     const ctx = document.getElementById('chart-char-count');
@@ -313,8 +293,8 @@ const Dashboard = (() => {
             borderRadius: 4,
           },
           {
-            label: `目標 ${CONFIG.TARGETS.charCount}字`,
-            data: data.map(() => CONFIG.TARGETS.charCount),
+            label: `目標 ${T.charCount}字`,
+            data: data.map(() => T.charCount),
             type: 'line',
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
@@ -332,17 +312,13 @@ const Dashboard = (() => {
         },
         scales: {
           ..._commonOptions.scales,
-          y: {
-            ..._commonOptions.scales.y,
-            suggestedMin: CONFIG.TARGETS.charCount * 0.97,
-          },
+          y: { ..._commonOptions.scales.y, suggestedMin: T.charCount * 0.97 },
         },
       },
     });
   };
 
-  /** 誤タイプ数推移（折れ線・目標 5 点線） */
-  const renderMissCountChart = (records, period) => {
+  const renderMissCountChart = (records, period, T) => {
     _destroyChart('missCount');
     const data = filterByPeriod(records, period).sort((a, b) => a.date.localeCompare(b.date));
     const ctx = document.getElementById('chart-miss-count');
@@ -365,8 +341,8 @@ const Dashboard = (() => {
             fill: true,
           },
           {
-            label: `目標 ${CONFIG.TARGETS.missCount}回以下`,
-            data: data.map(() => CONFIG.TARGETS.missCount),
+            label: `目標 ${T.missCount}回以下`,
+            data: data.map(() => T.missCount),
             borderColor: 'rgba(255,255,255,0.28)',
             borderWidth: 1.5,
             borderDash: [6, 4],
@@ -383,11 +359,7 @@ const Dashboard = (() => {
         },
         scales: {
           ..._commonOptions.scales,
-          y: {
-            ..._commonOptions.scales.y,
-            min: 0,
-            suggestedMax: CONFIG.TARGETS.missCount * 1.3,
-          },
+          y: { ..._commonOptions.scales.y, min: 0, suggestedMax: T.missCount * 1.3 },
         },
       },
     });
@@ -395,25 +367,28 @@ const Dashboard = (() => {
 
   /**
    * 全グラフを一括描画する
-   * @param {Array}  records  全レコード
-   * @param {string} period   'all' | '30d' | '7d'
+   * @param {Array}  records    全レコード
+   * @param {string} period     'all' | '30d' | '7d'
+   * @param {string} inputType  選択中の入力方式
    */
-  const renderAll = (records, period = 'all') => {
-    renderSummary(records);
-    renderScoreChart(records, period);
-    renderCorrectRateChart(records, period);
-    renderCharCountChart(records, period);
-    renderMissCountChart(records, period);
+  const renderAll = (records, period = 'all', inputType) => {
+    const T = _getTargets(inputType);
+    renderSummary(records, inputType);
+    renderScoreChart(records, period, T);
+    renderCorrectRateChart(records, period, T);
+    renderCharCountChart(records, period, T);
+    renderMissCountChart(records, period, T);
   };
 
   /**
    * 期間変更時にグラフのみ再描画
    */
-  const reRenderCharts = (records, period) => {
-    renderScoreChart(records, period);
-    renderCorrectRateChart(records, period);
-    renderCharCountChart(records, period);
-    renderMissCountChart(records, period);
+  const reRenderCharts = (records, period, inputType) => {
+    const T = _getTargets(inputType);
+    renderScoreChart(records, period, T);
+    renderCorrectRateChart(records, period, T);
+    renderCharCountChart(records, period, T);
+    renderMissCountChart(records, period, T);
   };
 
   return { renderAll, reRenderCharts, filterByPeriod };
