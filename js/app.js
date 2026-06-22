@@ -106,7 +106,7 @@
      ===================================================== */
   const _renderAll = () => {
     const filtered = _filteredRecords();
-    Dashboard.renderAll(filtered, _period);
+    Dashboard.renderAll(filtered, _period, _inputType);
     Recorder.renderTable(filtered, _isRecordMode);
   };
 
@@ -120,7 +120,7 @@
       document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       _period = tab.dataset.period;
-      Dashboard.reRenderCharts(_records, _period);
+      Dashboard.reRenderCharts(_filteredRecords(), _period, _inputType);
     });
   };
 
