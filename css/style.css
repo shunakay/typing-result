@@ -136,7 +136,7 @@ body {
 }
 
 .sidebar {
-  width: 152px;
+  width: 200px;
   flex-shrink: 0;
   background: var(--surface-low);
   border-right: 1px solid var(--border);
